@@ -24,42 +24,46 @@ const Home = () => {
 	})
   }
 
-  const addTodo = (user, task) => {
+  const updateTodos = (user, updateTasks) => {
 	fetch(`https://playground.4geeks.com/todo/todos/${user}`, {
-		method: "POST", 
-		body: JSON.stringify(task),
+		method: "PUT",
+		body: JSON.stringify(updateTasks),
 		headers: {
 			"Content-Type": "application/json"
 		}
-	}).then((response) => response.json()).then((data) => {
-		console.log(data)
-		task.id = data.id
-		setTasks([...tasks, task])
-		setInputValue("") 
 	})
+	.then((response) => response.json())
+	.then((data) => { 
+		console.log("Updated tasks.", data);
+		
+	})
+  }
+
+  const addTodo = () => {
+	if(inputValue.trim() === "") return; 
+	const newTask = {label: inputValue, is_done: false}
+	const updateTasks = [...tasks, newTask]
+	setTasks(updateTasks)
+	setInputValue("")
+	updateTodos(user, updateTasks)
   }
 
 	const handlePress = (e) => {
 		if(e.key === "Enter") {
-			let newTask = { "label": inputValue, "is_done": false}
-			addTodo(user, newTask)
+			addTodo()
 		
 		}
 	}
 
-	const deleteTodo = (id) => {
-		fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
-			method: "DELETE", 
-			headers: {
-				"Content-Type": "application/json"
-			}
-			})
+	const deleteTask = (id) => {
+		const updateTasks = tasks.filter((task, index) => index !== id)
+		setTasks(updateTasks)
+		updateTodos(user, updateTasks)
 	}
 
-	const deleteTask = (id) => {
-		const newTask = tasks.filter((task) => task.id !== id)
-		deleteTodo(id)
-		setTasks(newTask)
+	const clearTodos = () => {
+		setTasks([])
+		updateTodos(user, [])
 	}
 
 	return ( 
@@ -79,14 +83,19 @@ const Home = () => {
 							{tasks.length === 0 ? (
 								<li className="list-group-item" >No tasks, add tasks</li>
 							) : (
-								tasks.map((task) => (
+								tasks.map((task,index) => (
 								
-								<Task task={task} key={task.id} deleteTask={() => deleteTask(task.id)} />
+								<Task task={task} key={index} deleteTask={() => deleteTask(index)} />
 								)
 									
 								)
 							)}			
 			</ul>
+							{tasks.length > 0 && (
+								<button className="btn btn-danger mt-3" onClick={clearTodos}>
+									Clear All Tasks
+								</button>
+							)}
 		</div>
 	)
 };
