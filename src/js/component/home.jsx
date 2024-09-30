@@ -26,7 +26,7 @@ const Home = () => {
 
   const updateTodos = (user, updateTasks) => {
 	fetch(`https://playground.4geeks.com/todo/todos/${user}`, {
-		method: "PUT",
+		method: "POST",
 		body: JSON.stringify(updateTasks),
 		headers: {
 			"Content-Type": "application/json"
@@ -39,13 +39,31 @@ const Home = () => {
 	})
   }
 
+  	const deleteTodos = (id) => {
+		fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+		.then(() => {
+			const updateTasks = tasks.filter((task) => task.id !== id)
+			setTasks(updateTasks)})
+		.then((data) => { 
+			console.log("Updated tasks.", data);
+			
+		})
+
+	}
+   
+
   const addTodo = () => {
 	if(inputValue.trim() === "") return; 
 	const newTask = {label: inputValue, is_done: false}
 	const updateTasks = [...tasks, newTask]
 	setTasks(updateTasks)
 	setInputValue("")
-	updateTodos(user, updateTasks)
+	updateTodos(user, newTask)
   }
 
 	const handlePress = (e) => {
@@ -55,11 +73,12 @@ const Home = () => {
 		}
 	}
 
-	const deleteTask = (id) => {
-		const updateTasks = tasks.filter((task, index) => index !== id)
-		setTasks(updateTasks)
-		updateTodos(user, updateTasks)
-	}
+	// const deleteTask = (id) => {
+	// 	const updateTasks = tasks.filter((task, index) => index !== id)
+	// 	setTasks(updateTasks)
+	// 	updateTodos(user, updateTasks)
+	// }
+
 
 	const clearTodos = () => {
 		setTasks([])
@@ -85,7 +104,7 @@ const Home = () => {
 							) : (
 								tasks.map((task,index) => (
 								
-								<Task task={task} key={index} deleteTask={() => deleteTask(index)} />
+								<Task task={task} key={index} deleteTask={() => deleteTodos(task.id)} />
 								)
 									
 								)
