@@ -27,10 +27,10 @@ const Home = () => {
   const updateTodos = (user, updateTasks) => {
 	fetch(`https://playground.4geeks.com/todo/todos/${user}`, {
 		method: "POST",
-		body: JSON.stringify(updateTasks),
 		headers: {
 			"Content-Type": "application/json"
-		}
+		},
+		body: JSON.stringify(updateTasks)
 	})
 	.then((response) => response.json())
 	.then((data) => { 
@@ -41,6 +41,7 @@ const Home = () => {
 
   	const deleteTodos = (id) => {
 		fetch(`https://playground.4geeks.com/todo/todos/${id}`, {
+
 			method: "DELETE",
 			headers: {
 				"Content-Type": "application/json"
@@ -73,18 +74,6 @@ const Home = () => {
 		}
 	}
 
-	// const deleteTask = (id) => {
-	// 	const updateTasks = tasks.filter((task, index) => index !== id)
-	// 	setTasks(updateTasks)
-	// 	updateTodos(user, updateTasks)
-	// }
-
-
-	const clearTodos = () => {
-		setTasks([])
-		updateTodos(user, [])
-	}
-
 	return ( 
 		<div className="container text-center">
 			<h1 >todos</h1>
@@ -110,11 +99,7 @@ const Home = () => {
 								)
 							)}			
 			</ul>
-							{tasks.length > 0 && (
-								<button className="btn btn-danger mt-3" onClick={clearTodos}>
-									Clear All Tasks
-								</button>
-							)}
+						
 		</div>
 	)
 };
